@@ -1,5 +1,6 @@
 package com.itextpdf.text.pdf;
 
+import com.itextpdf.testutils.CompareTool;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
@@ -7,11 +8,13 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 public class TaggedPdfPageEventsTest extends PdfPageEventHelper {
 
@@ -24,7 +27,7 @@ public class TaggedPdfPageEventsTest extends PdfPageEventHelper {
     }
 
     @Test
-    public void test() throws FileNotFoundException, DocumentException {
+    public void test() throws IOException, DocumentException, InterruptedException {
         String file = "tagged_pdf_page_events.pdf";
 
         final Document document = new Document();
@@ -41,6 +44,13 @@ public class TaggedPdfPageEventsTest extends PdfPageEventHelper {
         document.add(new Paragraph("World"));
 
         document.close();
+
+        // compare
+        CompareTool compareTool = new CompareTool();
+        String errorMessage = compareTool.compareByContent(OUTPUT_FOLDER + file, CMP_FOLDER + file, OUTPUT_FOLDER, "diff");
+        if (errorMessage != null) {
+            Assert.fail(errorMessage);
+        }
     }
 
     @Override
